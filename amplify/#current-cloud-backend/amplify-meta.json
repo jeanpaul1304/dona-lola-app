@@ -1,0 +1,53 @@
+{
+	"providers": {
+		"awscloudformation": {
+			"AuthRoleName": "donalolaapp-20181020182335-authRole",
+			"UnauthRoleArn": "arn:aws:iam::176757336876:role/donalolaapp-20181020182335-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::176757336876:role/donalolaapp-20181020182335-authRole",
+			"Region": "us-east-1",
+			"DeploymentBucketName": "donalolaapp-20181020182335-deployment",
+			"UnauthRoleName": "donalolaapp-20181020182335-unauthRole",
+			"StackName": "donalolaapp-20181020182335",
+			"StackId": "arn:aws:cloudformation:us-east-1:176757336876:stack/donalolaapp-20181020182335/2948f790-d4bf-11e8-ae66-50d5cd2758d2"
+		}
+	},
+	"auth": {
+		"cognito12511ffc": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/donalolaapp-20181020182335-deployment/amplify-cfn-templates/auth/cognito12511ffc-cloudformation-template.yml",
+				"logicalId": "authcognito12511ffc"
+			},
+			"lastPushTimeStamp": "2018-10-21T00:26:22.764Z",
+			"output": {
+				"AppClientSecret": "1boljt7s363kj391p5467ga342qsgl9ok7b3s53nb3rugis2e5vk",
+				"UserPoolId": "us-east-1_ppcMutfsX",
+				"AppClientIDWeb": "3lrvprdhjv711n3grvdt7i2iu7",
+				"AppClientID": "52d98qpp11bp3a9fe82tnnt155",
+				"IdentityPoolId": "us-east-1:5378bbe5-6e1a-48e9-981b-881c03b18791",
+				"IdentityPoolName": "cognito12511ffc_identitypool_12511ffc",
+				"UserPoolName": "cognito12511ffc_userpool_12511ffc"
+			},
+			"lastPushDirHash": "+4v6GltyoEC7dvrIKAm6BjXjQP8="
+		}
+	},
+	"hosting": {
+		"S3AndCloudFront": {
+			"service": "S3AndCloudFront",
+			"providerPlugin": "awscloudformation",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/donalolaapp-20181020182335-deployment/amplify-cfn-templates/hosting/template.json",
+				"logicalId": "hostingS3AndCloudFront"
+			},
+			"lastPushTimeStamp": "2018-10-21T00:26:22.790Z",
+			"output": {
+				"S3BucketSecureURL": "https://donalolaapp-20181020192438--hostingbucket.s3.amazonaws.com",
+				"WebsiteURL": "http://donalolaapp-20181020192438--hostingbucket.s3-website-us-east-1.amazonaws.com",
+				"Region": "us-east-1",
+				"HostingBucketName": "donalolaapp-20181020192438--hostingbucket"
+			},
+			"lastPushDirHash": "P6ckjufXncZzKkPQnua9AT+pU5g="
+		}
+	}
+}

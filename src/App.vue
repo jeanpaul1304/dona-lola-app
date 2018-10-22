@@ -52,6 +52,8 @@
 
 <script>
 
+import { components } from 'aws-amplify-vue'
+
 export default {
   name: 'App',
   data () {
@@ -68,6 +70,9 @@ export default {
       rightDrawer: false,
       title: 'Vuetify.js'
     }
+  },
+  components: {
+    ...components
   }
 }
 </script>
