@@ -9,8 +9,6 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0-rc.1",
-    "aws-amplify": "^1.0.11-beta.6",
-    "aws-amplify-vue": "^0.1.1-beta.6",
     "axios": "^0.18.0",
     "register-service-worker": "^1.0.0",
     "vee-validate": "^2.1.0-beta.11",
