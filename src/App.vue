@@ -70,6 +70,25 @@ export default {
     }
   },
   components: {
+  },
+  mounted () {
+    var config = {
+      apiKey: "AIzaSyBT2R0MCritBu-VBgSlwjUMMlsolXI_H7A",
+      authDomain: "dona-lola-inc.firebaseapp.com",
+      databaseURL: "https://dona-lola-inc.firebaseio.com",
+      projectId: "dona-lola-inc",
+      storageBucket: "dona-lola-inc.appspot.com",
+      messagingSenderId: "407182717123"
+    }
+    firebase.initializeApp(config)
+    let user = 'jeanpaul1304@gmail.com'
+    let pass = '123456'
+    firebase.auth().signInWithEmailAndPassword(user, pass).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // ...
+    })
   }
 }
 </script>

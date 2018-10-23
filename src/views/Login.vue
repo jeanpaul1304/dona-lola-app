@@ -32,17 +32,13 @@
                     </v-btn>
                   <p>-> {{this.response}}</p>
                 </v-flex>
-                <amplify-authenticator v-bind:authOptions="authOptions"></amplify-authenticator>
             </v-form>
         </div>
     </v-container>
 </template>
 <script>
-const axios = require('axios')
-var auth = 'eyJraWQiOiI1WWxJT2FhUVlGK1k5eCtaN2FhcHVYYnlaVUc1MmVQVXhiSWRVSnZRRVZnPSIsImFsZyI6IlJTMjU2In0.eyJhdF9oYXNoIjoiWW5WQVVpSm5lMDJraUtZb0ExY1A1QSIsInN1YiI6ImU2MmFlYThiLTM3Y2EtNDc0Yi05ZWQ3LTg1M2YzYjA1ZWNhZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJnZW5kZXIiOiJNIiwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfRmRwU3hZRXFWIiwiY29nbml0bzp1c2VybmFtZSI6ImU2MmFlYThiLTM3Y2EtNDc0Yi05ZWQ3LTg1M2YzYjA1ZWNhZSIsImdpdmVuX25hbWUiOiJKdWFuIiwiYXVkIjoiN2MybTFtdDMzcHFzczQ5amI5MDEzajBqcDMiLCJldmVudF9pZCI6IjE3OTFlMDZiLWQ0MjMtMTFlOC05ODYzLTI3NTMxNDI3NjJkYyIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNTQwMDEwNzgyLCJwaG9uZV9udW1iZXIiOiIrNTE5NzM4NjQzOTIiLCJleHAiOjE1NDAwMTQzODIsImlhdCI6MTU0MDAxMDc4MiwiZmFtaWx5X25hbWUiOiJDcmlzYW50byIsImVtYWlsIjoiZGllZ29jcmlzYW50bzA2QGdtYWlsLmNvbSJ9.d3cqPLn5sTcToKclIQeWjTP_Vq0NtcM2aM9tLs2ZHLSFA08TI-XMN24A1XdYoyFFIUNGd-2C-tmrXrvlUnPOupg-lbrqBywW8nzwXxpFkDJEw_qGm1zgRgABxeOkD23jDsDAyFdMoXZNis2LZtv2M4olfWo9PxU_9NV1lPNfHmyQSDHgy0z5KaigGjhyJzykGHVTa34E6KE4iJfBbXRWsM9GpQeIS1HfCm2XVTs5jy1LDWTeLpfs8pXe6mGS6qV17B0Y8FP9eVi39wfZ-RWIfhunxT3N3D4Bkpw52VtziZHVBw9gpsJAjTFZcqj6U61W3v8ugEzxQXBVpys8ej6X-Q'
-var endPoint = 'http://apidonaloladev.us-east-1.elasticbeanstalk.com/api/'
+import { mapActions } from 'vuex'
 export default {
-
   name: 'Login',
   data () {
     return {
@@ -50,30 +46,6 @@ export default {
       password: '',
       email: '',
       show1: false,
-      authOptions: {
-        confirmSignInOptions: {
-          header: 'This is a label at the top of the component',
-          user: 'The user who is attempting to log in'
-        },
-        confirmSignUpOptions: {
-          header: 'This is a label at the top of the component', // type: string, default: 'Confirm Sign Up', required: false
-          username: 'The username of the user who is attempting to sign up' // type: string, default: username of user who completed sign up step, required: false
-        },
-        forgotPasswordOptions: {
-          header: 'This is a label at the top of the component' // type: string, default: 'Forgot Password', required: false
-        },
-        signInOptions: {
-          username: 'This is the default value for the username input field', // type: string, default: '' (unless user has completed signup actions), required: false
-          header: 'This is a label at the top of the component' // type: string, default: 'Sign In', required: false
-        },
-        signOutOptions: {
-          msg: 'This is a message that appears above the sign out button', // type: string, default: null
-          signOutButton: 'This is a label on the signout button' // type: string, default: 'Sign Out', required: false
-        },
-        signUpOptions: {
-          header: 'This is a label at the top of the component' // type: string, default: 'Sign Up', required: false
-        }
-      },
       dictionary: {
         custom: {
           email: {
@@ -88,16 +60,16 @@ export default {
   },
   mounted () {
     this.$validator.localize('en', this.dictionary)
-    console.log('as')
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + auth
-    axios
-      .get(endPoint + '/food-menu/local/1')
-      .then(response => (this.response = response))
   },
   methods: {
     submit () {
-      this.$validator.validateAll()
-    }
+      // this.$validator.validateAll()
+      let user = 'jeanpaul1304@gmail.com'
+      let pass = '123456'
+      this.login(user, pass)
+    }, ...mapActions([
+      'login'
+    ])
   }
 }
 
