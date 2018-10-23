@@ -12,10 +12,9 @@ export default new Vuex.Store({
   mutations: {
   },
   actions: {
-    login (email, password) {
-      console.log('entra?')
-      return AuthService.login(email, password)
-    }
+    login (context, data) {
+      return AuthService.login(data.email, data.password)
+    },
     changeMenu (flag) {
       this.state.showMenu = flag
     }

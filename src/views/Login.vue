@@ -39,10 +39,11 @@
     </v-container>
 </template>
 <script>
+
+import { mapActions } from 'vuex'
 const axios = require('axios')
 var endPoint = '/'
 var auth = ''
-import { mapActions } from 'vuex'
 export default {
 
   name: 'Login',
@@ -74,10 +75,11 @@ export default {
   methods: {
     submit () {
       // this.$validator.validateAll()
-      let user = 'jeanpaul1304@gmail.com'
-      let pass = '123456'
-      this.login(user, pass)
-    }, ...mapActions([
+      let email = 'jeanpaul1304@gmail.com'
+      let password = '123456'
+      this.login({ email, password })
+    },
+    ...mapActions([
       'login'
     ])
   }
