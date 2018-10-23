@@ -7,6 +7,7 @@
             <v-form class="ctn-login">
                 <v-text-field
                   v-validate="'required|email'"
+                  prepend-icon="account_circle"
                   :error-messages="errors.collect('email')"
                   v-model="email"
                   label="E-mail"
@@ -15,6 +16,7 @@
                 ></v-text-field>
                 <v-text-field
                   v-model="password"
+                  prepend-icon="lock"
                   :append-icon="show1 ? 'visibility_off' : 'visibility'"
                   v-validate="'required'"
                   :error-messages="errors.collect('password')"
@@ -37,8 +39,12 @@
     </v-container>
 </template>
 <script>
+const axios = require('axios')
+var endPoint = '/'
+var auth = ''
 import { mapActions } from 'vuex'
 export default {
+
   name: 'Login',
   data () {
     return {
@@ -60,6 +66,10 @@ export default {
   },
   mounted () {
     this.$validator.localize('en', this.dictionary)
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + auth
+    axios
+      .get(endPoint + '/food-menu/local/1')
+      .then(response => (this.response = response))
   },
   methods: {
     submit () {
