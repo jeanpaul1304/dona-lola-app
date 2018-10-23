@@ -24,6 +24,9 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+    <v-btn fab dark small color="blue" class="menu-btn" @click="drawer = true">
+      <v-icon dark>menu</v-icon>
+    </v-btn>
     <v-content>
       <router-view/>
     </v-content>
@@ -31,13 +34,14 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'App',
   data () {
     return {
-      clipped: false,
       drawer: false,
+      clipped: false,
       fixed: false,
       items: [{
         icon: 'bubble_chart',
@@ -46,7 +50,18 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'Dona Lola'
+      title: 'Dona Lola',
+      ...mapState([
+        'showMenu'
+      ])
+    }
+  },
+  methods: {
+    ...mapActions([
+      'changeMenu'
+    ]),
+    openMenu () {
+      this.changeMenu(true)
     }
   },
   components: {
@@ -64,3 +79,9 @@ export default {
   }
 }
 </script>
+<style lang="stylus">
+.menu-btn
+  position absolute
+  z-index 1
+
+</style>
