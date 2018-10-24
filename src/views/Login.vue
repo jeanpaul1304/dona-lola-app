@@ -40,13 +40,8 @@
     </v-container>
 </template>
 <script>
-
 import { mapActions } from 'vuex'
-const axios = require('axios')
-var endPoint = '/'
-var auth = ''
 export default {
-
   name: 'Login',
   data () {
     return {
@@ -68,26 +63,27 @@ export default {
   },
   mounted () {
     this.$validator.localize('en', this.dictionary)
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + auth
-    axios
-      .get(endPoint + '/food-menu/local/1')
-      .then(response => (this.response = response))
   },
   methods: {
     submit () {
       // this.$validator.validateAll()
       let email = this.email
       let password = this.password
+      let vm = this
       this.error = ''
       this.login({ email, password }).then((data) => {
-        this.$route.push('home')
+        firebase.auth().currentUser.getIdToken().then((data) => {
+          this.setToken(data)
+          this.$router.push('home')
+        })
       }).catch((error) => {
         this.error = 'Ingrese credenciales validas'
         return error
       })
     },
     ...mapActions([
-      'login'
+      'login',
+      'setToken'
     ])
   }
 }

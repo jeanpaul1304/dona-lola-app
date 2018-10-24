@@ -1,10 +1,10 @@
 <template>
-  <v-container fluid>
+  <v-container fluid class="home">
     <GmapMap
-      :center="{lat:10, lng:10}"
-      :zoom="7"
-      map-type-id="terrain"
-      style="width: 500px; height: 300px"
+      :center="currentLocation"
+      :zoom="15"
+      style="width: 100wh; height: 100vh;"
+      :options="mapOptions"
     >
       <GmapMarker
         :key="index"
@@ -21,6 +21,7 @@
 <script>
 import Vue from 'vue'
 import * as VueGoogleMaps from 'vue2-google-maps'
+import { mapActions } from 'vuex'
 
 Vue.use(VueGoogleMaps, {
   load: {
@@ -33,16 +34,55 @@ export default {
     return {
       markers: [
         {
-          location: { lat: 10, lng: 10 }
+          location: { lat: 12.090410949812993, lng: -77.022991721078 }
         }
-      ]
+      ],
+      currentLocation: {
+        lat: 12.090410949812993,
+        lng: -77.022991721078
+      },
+      mapOptions: {
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false
+      }
+    }
+  },
+  mounted () {
+    this.showMarkers()
+    this.getLocation()
+  },
+  methods: {
+    ...mapActions([
+      'getMarkers'
+    ]),
+    getLocation () {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(this.showPosition)
+      }
+    },
+    showPosition (position) {
+      console.log('test')
+      this.currentLocation.lat = parseFloat(position.coords.latitude)
+      this.currentLocation.lon = parseFloat(position.coords.longitude)
+    },
+    showMarkers () {
+      this.getMarkers().then((data) => {
+        console.log(data)
+      })
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.map {
+  width: 100%;
+  height: 100%;
+}
+.home {
+  padding: 0;
+}
 h1, h2 {
   font-weight: normal;
 }
