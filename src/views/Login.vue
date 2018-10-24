@@ -25,14 +25,15 @@
                   label="Password"
                   @click:append="show1 = !show1"
                 ></v-text-field>
-
+                <p v-if="error">{{error}}</p>
                 <v-flex xs12 sm6 text-center>
                     <v-btn
                         @click="submit"
                     >
                         Entrar
-                    </v-btn>
-                  <p>-> {{this.response}}</p>
+                    </v-btn> <br>
+                    <a href="#"><b>Crea tu usuario</b></a> <br>
+                    <a href="#">Olvide mi contraseña</a>
                 </v-flex>
             </v-form>
         </div>
@@ -50,8 +51,8 @@ export default {
   data () {
     return {
       response: '',
-      password: '',
-      email: '',
+      password: '123456',
+      email: 'jeanpaul1304@gmail.com',
       show1: false,
       dictionary: {
         custom: {
@@ -75,9 +76,15 @@ export default {
   methods: {
     submit () {
       // this.$validator.validateAll()
-      let email = 'jeanpaul1304@gmail.com'
-      let password = '123456'
-      this.login({ email, password })
+      let email = this.email
+      let password = this.password
+      this.error = ''
+      this.login({ email, password }).then((data) => {
+        this.$route.push('home')
+      }).catch((error) => {
+        this.error = 'Ingrese credenciales validas'
+        return error
+      })
     },
     ...mapActions([
       'login'

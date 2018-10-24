@@ -17,6 +17,9 @@ export default new Vuex.Store({
     },
     changeMenu (flag) {
       this.state.showMenu = flag
+    },
+    getMarkers () {
+      return MapService.getMarkers()
     }
   }
 })

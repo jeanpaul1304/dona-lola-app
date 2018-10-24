@@ -32,7 +32,9 @@ export default {
   data () {
     return {
       markers: [
-        {]
+        {
+          location: { lat: 10, lng: 10 }
+        }
       ]
     }
   }

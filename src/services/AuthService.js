@@ -3,12 +3,14 @@ import Service from './Service'
 class AuthService extends Service {
   constructor () {
     super()
-    let test = 'Msg test'
+    let idToken = ''
   }
 
   login (email = '', pass = '') {
     if (email && pass) {
-      return firebase.auth().signInWithEmailAndPassword(email, pass).catch(function (error) {
+      return firebase.auth().signInWithEmailAndPassword(email, pass).then((data) => {
+        return data
+      }).catch(function (error) {
         return Promise.reject(error)
       })
     }
