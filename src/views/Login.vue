@@ -4,7 +4,7 @@
             <h1 class="title-ctn">
                 <img src="../assets/img/logo.png" alt="dona lola">
             </h1>
-            <v-form class="ctn-login">
+            <v-form v-if="currentForm == 'login'" class="ctn-login">
                 <v-text-field
                   v-validate="'required|email'"
                   prepend-icon="account_circle"
@@ -26,23 +26,30 @@
                   @click:append="show1 = !show1"
                 ></v-text-field>
                 <p v-if="error">{{error}}</p>
-                <v-flex xs12 sm6 text-center>
+                <v-flex xs12 sm6 text-center style="margin-bottom:10px;">
                     <v-btn
+                        style="color:#fff"
+                        color="teal"
                         @click="submit"
                     >
-                        Entrar
+                        INICIAR SESION
                     </v-btn> <br>
-                    <a href="#"><b>Crea tu usuario</b></a> <br>
-                    <a href="#">Olvide mi contraseña</a>
+                    <a href="#" @click="currentForm = 'registration'" style="color:#42A5F5;text-decoration: none;"><b>Crea tu usuario</b></a> <br>
+                    <a href="#" @click="currentForm = 'forgotPass'" style="color:#42A5F5;text-decoration: none;">Olvide mi contraseña</a>
                 </v-flex>
             </v-form>
+            <registration v-if="currentForm == 'registration'"></registration>
         </div>
     </v-container>
 </template>
 <script>
 import { mapActions } from 'vuex'
+import registration from '../components/Registration'
 export default {
   name: 'Login',
+  components: {
+    registration
+  },
   data () {
     return {
       response: '',
@@ -58,7 +65,8 @@ export default {
             required: 'Ingrese su contraseña'
           }
         }
-      }
+      },
+      currentForm: 'login'
     }
   },
   mounted () {
@@ -69,11 +77,14 @@ export default {
       // this.$validator.validateAll()
       let email = this.email
       let password = this.password
-      let vm = this
       this.error = ''
       this.login({ email, password }).then((data) => {
+        window.c = firebase.auth().currentUser
+        debugger
         firebase.auth().currentUser.getIdToken().then((data) => {
           this.setToken(data)
+          // console.log(firebase.auth().userInfo().getEmail())
+          let currentUser = firebase.auth().currentUser
           this.$router.push('home')
         })
       }).catch((error) => {
@@ -90,18 +101,21 @@ export default {
 
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
   .bg
     padding 0
   .login-ctn
     background url('../assets/img/bg.jpg')
-    position absolute
-    height 100vh
-    width 100vw
-    left 0
-    right 0
-    background-size cover
     padding-top 10vh
+    position: absolute
+    height: 100%
+    width: 100vw
+    left: 0
+    right: 0
+    background-size: cover
+    padding-top: 9vh
+    padding-bottom: 4vh
+    overflow: auto
   .title-ctn
     text-align center
     display inline-block

@@ -8,11 +8,11 @@ class MapService extends Service {
 
   getMarkers () {
     return this.request({
-      url: 'http://apidonaloladev.us-east-1.elasticbeanstalk.com/api/foodPlace/listNearby',
+      url: 'https://api.donalolafood.com/api/foodPlace/listNearby',
       body: {
-        'latitude': -12.082988,
-        'longitude': -77.0235867,
-        'radius': 100000000
+        "latitude": -12.089433,
+        "longitude": -77.0228733,
+        "radius": 1000
       }
     })
   }

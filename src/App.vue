@@ -24,9 +24,6 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-btn fab dark small color="blue" class="menu-btn" @click="drawer = true">
-      <v-icon dark>menu</v-icon>
-    </v-btn>
     <v-content>
       <router-view/>
     </v-content>

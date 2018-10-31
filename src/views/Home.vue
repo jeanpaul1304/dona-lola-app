@@ -1,28 +1,191 @@
 <template>
   <v-container fluid class="home">
-    <GmapMap
-      :center="currentLocation"
-      :zoom="15"
-      style="width: 100wh; height: 100vh;"
-      :options="mapOptions"
+    <div class="menu-side" transition="slide-x-transition" v-show="showSide">
+      <div class="bar">
+        <v-icon class="back-menu" @click="showSide = false">keyboard_arrow_left</v-icon>
+        <p>MENU</p>
+      </div>
+      <a href="javascript:;" @click="searchNearChefMenu" v-ripple>
+        <img src="../assets/img/chefs.png" alt="chefs">
+        <p>Buscar chefs cerca de ti</p>
+      </a>
+      <a href="javascript:;" @click="searchByNameMenu" v-ripple>
+        <img src="../assets/img/nombre.png" alt="chefs">
+        <p>Buscar chefs por nombre</p>
+      </a>
+      <a href="javascript:;" @click="myOrdersMenu" v-ripple>
+        <img src="../assets/img/curso.png" alt="chefs">
+        <p>Pedidos en curso</p>
+      </a>
+      <a href="javascript:;" @click="configMenu" v-ripple>
+        <img src="../assets/img/config.png" alt="chefs">
+        <p>Configuración</p>
+      </a>
+      <div class="text-center" style="text-align: center;">
+        <v-btn big @click="closeSession" color="error">
+          Cerrar sesión
+        </v-btn>
+      </div>
+    </div>
+    <v-btn fab dark small color="blue" class="menu-btn" @click="showSide = true">
+      <v-icon dark>menu</v-icon>
+    </v-btn>
+    <div id="map">
+    </div>
+    <div class="low-info" transition="slide-y-transition" v-show="currentMark.id ? 'show': ''">
+      <v-btn fab dark icon color="red" class="close" @click="cleanCurrent">
+        <v-icon>close</v-icon>
+      </v-btn>
+      <div class="seller">
+        <div class="name">{{currentMark.name}}</div>
+        <img :src="currentMark.photoUrl">
+        <p>Solo para recoger en la dirección del ama de casa entre 12:00pm y 3:00pm</p>
+        <p>{{currentMark.location.address}}</p>
+      </div>
+      <div class="dish">
+        <v-carousel class="carrousel" hide-delimiters interval="12000" v-if="currentDishes">
+          <v-carousel-item
+            v-for="(item, i) in currentDishes"
+            :key="i"
+            class="dish-info"
+          >
+            <p class="name">{{item.name}}</p>
+            <div class="ctn-img">
+              <img :src="item.image" alt="">
+            </div>
+            <div class="ctn-details">
+              <p class="description">{{item.description}}</p>
+              <p class="price">{{item.price | currency('S/') }}</p>
+            </div>
+          </v-carousel-item>
+        </v-carousel>
+        <div class="error" v-else style="width: 90%;margin: 24px auto;color:#fff;">
+          <p>El chef seleccionado no cuenta con platos para hoy</p>
+        </div>
+        <v-btn small v-if="currentDishes"  @click="openOrder" color="primary">Pedir</v-btn>
+      </div>
+    </div>
+
+    <v-dialog
+      v-model="order"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+      scrollable
     >
-      <GmapMarker
-        :key="index"
-        v-for="(m, index) in markers"
-        :position="m.position"
-        :clickable="true"
-        :draggable="true"
-        @click="center=m.position"
-      />
-    </GmapMap>
+      <v-card tile>
+        <v-toolbar card dark color="primary">
+          <v-btn icon dark @click.native="order = false">
+            <v-icon>close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Pedido</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn dark flat @click.native="order = false">Cerrar</v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+        <v-card-text>
+          <v-list three-line subheader class="seller">
+            <div class="order">
+              <div class="ctn-avatar">
+                <v-avatar
+                  :size="'20vh'"
+                  color="grey lighten-4"
+                >
+                  <img :src="currentMark.photoUrl" alt="avatar">
+                </v-avatar>
+              </div>
+              <div class="details">
+              <div class="name">{{currentMark.name}}</div>
+              <p>Solo para recoger en la dirección del ama de casa entre 12:00pm y 3:00pm</p>
+              <p>{{currentMark.location.address}}</p>
+            </div>
+              <div class="step1" v-show="orderStep == 1">
+                <div class="list-dishes">
+                  <div class="dish" v-for="(item, i) in currentDishes" v-bind:key="i">
+                    <div class="ctn-checkbox">
+                      <v-checkbox v-model="selectedDishes" :value="item"
+                      ></v-checkbox>
+                    </div>
+                    <div class="ctn-img">
+                      <img :src="item.image" alt="">
+                      <p class="price">{{item.price | currency('S/') }}</p>
+                    </div>
+                    <div class="ctn-details">
+                      <p class="name">{{item.name}}</p>
+                      <p class="description">{{item.description}}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="ctn-btns">
+                  <v-btn large :disabled="!selectedDishes.length" @click="selectPayMethod" color="primary">Pedir</v-btn>
+                </div>
+              </div>
+              <div class="step step2" v-show="orderStep == 2">
+                <div class="detail-dishes">
+                  <div class="ctn-detail-dishes" v-for="(item, i) in selectedDishes" v-bind:key="i">
+                    <p class="name">{{item.name}}</p>
+                    <p class="description">{{item.price | currency('S/')}}</p>
+                  </div>
+                  <div class="ctn-detail-dishes">
+                    <p class="name"><b>Total</b></p>
+                    <p class="description"><b>{{amountFinal | currency('S/')}}</b></p>
+                  </div>
+                </div>
+                <div class="additional-info">
+                  <h3 style="color:red;text-align: center;">¡Importante!</h3>
+                  <p>{{currentMark.name}} te confirmará el pedido en máximo 10 minutos.</p>
+                  <div class="ctn-pay-method">
+                    <div class="method money">
+                      <v-checkbox v-model="selectedPaymentMethod" value="CASH"></v-checkbox>
+                      <img src="../assets/img/money.png" alt="">
+                    </div>
+                    <div class="method card">
+                      <v-checkbox v-model="selectedPaymentMethod" value="CREDIT_CARD"></v-checkbox>
+                      <img src="../assets/img/cc.png" alt="">
+                    </div>
+                  </div>
+                </div>
+                <div class="ctn-btns">
+                  <v-btn large :disabled="!selectedPaymentMethod" @click="payOrder" color="primary">¡Lo quiero!</v-btn>
+                </div>
+              </div>
+              <div class="step step3" v-show="orderStep == 3">
+                <div class="detail-dishes">
+                  <div class="ctn-detail-dishes" v-for="(item, i) in selectedDishes" v-bind:key="i">
+                    <p class="name">{{item.name}}</p>
+                    <p class="description">{{item.price | currency('S/')}}</p>
+                  </div>
+                  <div class="ctn-detail-dishes">
+                    <p class="name"><b>Total</b></p>
+                    <p class="description"><b>{{amountFinal | currency('S/')}}</b></p>
+                  </div>
+                </div>
+                <div class="status-info">
+                  <img src="../assets/img/order-status.png" alt="">
+                  <p>¡{{this.currentMark.name}} recibió tu pedido!</p>
+                </div>
+                <div class="ctn-btns">
+                  <v-btn large @click="order = false" color="primary">Volver al inicio</v-btn>
+                </div>
+              </div>
+            </div>
+          </v-list>
+        </v-card-text>
+
+        <div style="flex: 1 1 auto;"></div>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import Vue from 'vue'
 import * as VueGoogleMaps from 'vue2-google-maps'
+import Vue2Filters from 'vue2-filters'
 import { mapActions } from 'vuex'
 
+Vue.use(Vue2Filters)
 Vue.use(VueGoogleMaps, {
   load: {
     key: 'AIzaSyCplOQzYt_d7-3pTBkvuUuSWikVCIkWP7s'
@@ -32,11 +195,13 @@ export default {
   name: 'Home',
   data () {
     return {
-      markers: [
-        {
-          location: { lat: 12.090410949812993, lng: -77.022991721078 }
+      showSide: false,
+      markers: [{
+        position: {
+          lat: 12.09041094,
+          lng: -77.02299172
         }
-      ],
+      }],
       currentLocation: {
         lat: 12.090410949812993,
         lng: -77.022991721078
@@ -45,56 +210,343 @@ export default {
         mapTypeControl: false,
         streetViewControl: false,
         fullscreenControl: false
-      }
+      },
+      map: {},
+      currentMark: {
+        name: '',
+        location: {
+          address: ''
+        },
+        photoUrl: ''
+      },
+      defaultDishImage: 'https://i1.wp.com/www.foot.com/wp-content/uploads/2017/03/placeholder.gif?fit=300%2C185&ssl=1',
+      currentDishes: [
+        {
+          image: 'https://i1.wp.com/www.foot.com/wp-content/uploads/2017/03/placeholder.gif?fit=300%2C185&ssl=1'
+        }
+      ],
+      order: false,
+      orderStep: 1,
+      selectedDishes: [],
+      selectedPaymentMethod: '',
+      orderData: {},
+      currentMenuofDay: {}
+    }
+  },
+  computed: {
+    amountFinal () {
+      let a = this.selectedDishes.reduce((acu, nextVal) => {
+        return acu + nextVal.price
+      }, 0)
+      return a
+    }
+  },
+  watch: {
+    order () {
+      this.selectedDishes = []
+      this.orderStep = 1
     }
   },
   mounted () {
-    this.showMarkers()
+    // debugger
     this.getLocation()
   },
   methods: {
     ...mapActions([
-      'getMarkers'
+      'getMarkers',
+      'getDishes',
+      'putOrder'
     ]),
+    closeSession () {
+      this.$router.push('/')
+    },
     getLocation () {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(this.showPosition)
-      }
+      navigator.geolocation.getCurrentPosition(this.showPosition)
+    },
+    searchNearChefMenu () {
+      this.showSide = false
+    },
+    searchByNameMenu () {
+      this.showSide = false
+    },
+    myOrdersMenu () {
+      this.showSide = false
+    },
+    configMenu () {
+      this.showSide = false
     },
     showPosition (position) {
-      console.log('test')
       this.currentLocation.lat = parseFloat(position.coords.latitude)
       this.currentLocation.lon = parseFloat(position.coords.longitude)
+      this.map = new google.maps.Map(document.getElementById('map'), {
+        center: {
+          lat: this.currentLocation.lat,
+          lng: this.currentLocation.lon
+        },
+        zoom: 14,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false
+      })
+      this.showMarkers()
     },
     showMarkers () {
-      this.getMarkers().then((data) => {
-        console.log(data)
+      this.getMarkers().then((response) => {
+        let mark = {}
+        for (let data of response.places) {
+          mark = {
+            LatLng: { lat: data.location.latitude, lng: data.location.longitude },
+            name: data.name
+          }
+          this.generateMarkers(data, mark)
+        }
+      })
+    },
+    generateMarkers (data, mark) {
+      var marker = new google.maps.Marker({
+        position: mark.LatLng,
+        map: this.map,
+        title: mark.name
+      })
+      marker.addListener('click', (mrk) => {
+        this.openInfo(data, data.name, data.id, data.photoUrl)
+      })
+      this.markers.push(marker)
+    },
+    openInfo (data) {
+      this.searchDishes(data.id)
+      this.currentMark = data
+    },
+    searchDishes (idMarker) {
+      this.getDishes({ idMarker }).then((response) => {
+        this.currentMenuofDay = response[0]
+        this.currentDishes = response[0].items
+      })
+      console.log('el marker consultado plato', idMarker)
+    },
+    cleanCurrent () {
+      this.currentMark = {
+        name: '',
+        location: {
+          address: ''
+        },
+        photoUrl: ''
+      }
+    },
+    openOrder () {
+      this.order = true
+    },
+    selectPayMethod () {
+      this.orderStep = 2
+    },
+    payOrder () {
+      this.email = firebase.auth().currentUser.email
+      let items = this.selectedDishes.map((item, pos) => {
+        return {
+          'foodMenuId': this.currentMenuofDay.id,
+          'itemMenuId': item.id,
+          'quantity': 1
+        }
+      })
+      this.orderData = {
+        'comment': '',
+        'foodPlaceId': this.currentMark.id,
+        'items': items,
+        'paymentMethod': this.selectedPaymentMethod
+      }
+      // this.orderStep = 3
+      this.putOrder(this.orderData).then((data) => {
+        this.orderStep = 3
       })
     }
   }
 }
 </script>
 
-<style scoped>
-.map {
-  width: 100%;
-  height: 100%;
-}
-.home {
-  padding: 0;
-}
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+<style lang="stylus" scoped>
+.menu-side
+  font-size 0
+  height: 100vh
+  position: absolute
+  z-index: 2
+  background: rgba(255,255,255,.9)
+  .back-menu
+    position: absolute
+    left: 3px
+    z-index: 1
+    font-size: 30px
+    color: #fff
+  .bar
+    background #F44336
+    color #fff
+    text-align center
+    font-size 20px
+    height: 46px
+    display: flex
+    align-self: center
+    align-items: center
+    justify-content: center
+    box-shadow: 1px 1px 1px #999
+    p
+      margin: 8px
+  a
+    display: inline-block
+    width 50%
+    font-size 18px
+    text-align center
+    padding 18px
+    color #2196f3
+.order
+  .ctn-pay-method
+    font-size 0
+    .method
+      display: inline-block
+      width 50%
+      text-align center
+      img, .v-input
+        display inline-block
+        vertical-align middle
+  .ctn-btns
+    text-align center
+    margin-top 10px
+  .ctn-avatar, .details
+    display inline-block
+    vertical-align top
+  .ctn-avatar
+    width 40%
+    padding-top 10px
+  .details
+    width 59%
+    padding-left: 8px
+    p
+      line-height 1.3em
+  .name
+    font-size: 17px
+    font-weight: 600
+  .list-dishes
+    .dish
+      padding 10px 0
+      &:nth-child(2n)
+        background aliceblue
+    p
+      margin 0
+    .ctn-checkbox, .ctn-img, .ctn-details
+      display inline-block
+      vertical-align middle
+    .ctn-checkbox
+      width 15%
+      >>> .v-input__control
+        margin 0 auto
+    .ctn-img
+      width 35%
+      text-align center
+      img
+        width 90%
+    .ctn-details
+      width 49%
+      vertical-align top
+  .ctn-detail-dishes
+    margin-top 20px
+    .name, .description
+      display inline-block
+      vertical-align top
+    .name
+      width 70%
+      font-weight 400
+    .description
+      font-weight 600
+      width 29%
+      text-align right
+  .status-info
+    text-align: center
+    margin-top 20px
+    p
+      font-size 1.2em
+.low-info
+  position: absolute
+  bottom: 0
+  left: 0
+  with: 100%
+  height: auto
+  background: #fff
+  font-size 0
+  padding 30px 12px 8px 12px
+  box-shadow 1px -1px 8px 0px #d2d2d2
+  .dish, .seller
+    font-size 14px
+    display inline-block
+  .dish
+    width 60%
+    vertical-align top
+    text-align center
+    .carrousel
+      width: 90%
+      margin: 0 auto
+      height auto !important
+      box-shadow none
+      >>> .v-btn__content
+        background: #a5a5a5
+        i
+          font-size 28px !important
+      .v-carousel__next, .v-carousel__prev
+        top: 58%
+      .dish-info
+        .name
+          margin-bottom: 3px
+        .ctn-img
+          height 130px
+          display: flex
+          align-items: center
+        >>> .v-image
+          height auto !important
+        .ctn-details
+          .description, .price
+            display: inline-block
+            vertical-align top
+            line-height: 1em
+            margin-bottom 0
+          .description
+            width 60%
+            text-align left
+          .price
+            width 39%
+            text-align right
+            font-weight bold
+        img
+          max-width 100%
+  .close
+    position: absolute
+    right: 0
+    top 0
+    width 25px
+    height 25px
+    i
+      font-size 14px
+  .seller
+    width 40%
+    p
+      font-size 11px
+    .name
+      font-size 16px
+      text-align center
+      font-weight 600
+    img
+      max-width 100%
+#map
+  width: 100vw
+  height: 100vh
+.home
+  padding: 0
+h1, h2
+  font-weight: normal
+ul
+  list-style-type: none
+  padding: 0
+li
+  display: inline-block
+  margin: 0 10px
+a
+  color: #42b983
+.menu-btn
+  position absolute
 </style>
