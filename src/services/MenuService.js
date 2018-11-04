@@ -1,6 +1,6 @@
 import Service from './Service'
 import AuthService from "./AuthService"
-
+let base = 'https://api.donalolafood.com/api/'
 class MenuService extends Service {
   constructor () {
     super()
@@ -8,7 +8,7 @@ class MenuService extends Service {
 
   getDishes (id) {
     return this.request({
-      url: 'https://api.donalolafood.com/api/food-menu/local/' + id,
+      url: base + 'food-menu/local/' + id,
       method: 'GET',
       body: {
         "idLocal ": id
@@ -17,9 +17,15 @@ class MenuService extends Service {
   }
   putOrder (data) {
     return this.request({
-     url: 'https://api.donalolafood.com/api/orders/add',
+     url: base + 'orders/add',
      method: 'POST',
      body: data
+    })
+  }
+  getMyOrders () {
+    return this.request({
+      url: base + 'orders/user',
+      method: 'GET'
     })
   }
 }

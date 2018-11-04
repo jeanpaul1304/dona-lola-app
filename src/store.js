@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import Service from './services/Service'
 import AuthService from './services/AuthService'
 import MapService from './services/MapService'
 import MenuService from './services/MenuService'
@@ -11,9 +10,15 @@ export default new Vuex.Store({
   state: {
     showMenu: false,
     logeado: false,
-    token: ''
+    token: '',
+    chefs: []
   },
   mutations: {
+    setChefs (state, places) {
+      state.chefs = places.filter(item => {
+        return item
+      })
+    }
   },
   actions: {
     login (context, data) {
@@ -22,23 +27,31 @@ export default new Vuex.Store({
     changeMenu (flag) {
       this.state.showMenu = flag
     },
-    getMarkers () {
-      return MapService.getMarkers()
+    getMarkers (context) {
+      return MapService.getMarkers().then((data) => {
+        context.commit('setChefs', data.places)
+        return data
+      })
     },
     getDishes (context, data) {
       return MenuService.getDishes(data.idMarker)
     },
     setToken (context, token) {
-      console.log(context)
       context.state.logeado = true
       AuthService.setToken(token)
     },
     putOrder (context, data) {
       return MenuService.putOrder(data)
+    },
+    getMyOrders () {
+      return MenuService.getMyOrders()
+    }
+  },
+  getters: {
+    getChefs: state => {
+      return state.chefs.filter(item => {
+        return item
+      })
     }
   }
 })
-
-
-
-

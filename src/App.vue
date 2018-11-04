@@ -55,7 +55,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'changeMenu'
+      'changeMenu',
+      'setToken'
     ]),
     openMenu () {
       this.changeMenu(true)
@@ -73,6 +74,17 @@ export default {
       messagingSenderId: '407182717123'
     }
     firebase.initializeApp(config)
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        console.log('ýaaaaaaaa', user)
+        firebase.auth().currentUser.getIdToken().then((data) => {
+          this.setToken(data)
+          this.$router.push('home')
+        })
+      } else {
+        console.log('aun no!!!')
+      }
+    })
   }
 }
 </script>

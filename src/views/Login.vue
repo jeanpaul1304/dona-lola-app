@@ -1,6 +1,6 @@
 <template>
     <v-container fluid class="bg">
-        <div class="login-ctn">
+        <v-form class="login-ctn">
             <h1 class="title-ctn">
                 <img src="../assets/img/logo.png" alt="dona lola">
             </h1>
@@ -38,8 +38,30 @@
                     <a href="#" @click="currentForm = 'forgotPass'" style="color:#42A5F5;text-decoration: none;">Olvide mi contraseña</a>
                 </v-flex>
             </v-form>
-            <registration v-if="currentForm == 'registration'"></registration>
-        </div>
+          <registration v-if="currentForm == 'registration'" @return="currentForm = 'login'"> </registration>
+          <v-form v-if="currentForm == 'forgotPass'" class="ctn-login">
+            <v-text-field
+              v-validate="'required|email'"
+              prepend-icon="account_circle"
+              :error-messages="errors.collect('email')"
+              v-model="emailRecover"
+              label="E-mail"
+              data-vv-name="email"
+              required
+            ></v-text-field>
+            <v-flex xs12 sm6 text-center style="margin-bottom:10px;">
+              <v-btn
+                style="color:#fff"
+                color="teal"
+                @click="recoverPass"
+              >
+                Reestablecer password
+              </v-btn> <br>
+              <p v-if="textEmail">{{this.textEmail}}</p>
+              <a href="#" @click="currentForm = 'login'" style="color:#42A5F5;text-decoration: none;"><b>ATRAS</b></a>
+            </v-flex>
+          </v-form>
+        </v-form>
     </v-container>
 </template>
 <script>
@@ -66,7 +88,10 @@ export default {
           }
         }
       },
-      currentForm: 'login'
+      currentForm: 'login',
+      error: '',
+      textEmail: '',
+      emailRecover: ''
     }
   },
   mounted () {
@@ -79,17 +104,20 @@ export default {
       let password = this.password
       this.error = ''
       this.login({ email, password }).then((data) => {
-        window.c = firebase.auth().currentUser
-        debugger
         firebase.auth().currentUser.getIdToken().then((data) => {
           this.setToken(data)
-          // console.log(firebase.auth().userInfo().getEmail())
-          let currentUser = firebase.auth().currentUser
           this.$router.push('home')
         })
       }).catch((error) => {
         this.error = 'Ingrese credenciales validas'
         return error
+      })
+    },
+    recoverPass () {
+      firebase.auth().sendPasswordResetEmail(this.emailRecover).then(() => {
+        this.textEmail = 'Se envió el correo de recuperación'
+      }).catch((error) => {
+        this.textAlign = error.message
       })
     },
     ...mapActions([

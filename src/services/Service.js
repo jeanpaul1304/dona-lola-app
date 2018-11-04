@@ -12,21 +12,16 @@ class Service {
     axios.defaults.headers.common['Authorization'] = token
   }
 
-  async request ({ url, method = 'POST', body }) {
+  async request ({ url, method = 'POST', body = {} }) {
     // debugger
     return axios({
       method: method,
       url: url,
       data: body,
-      headers: { 'Authorization': auth, 'Content-Type': 'application/json' }
-    }).then((response) => response.data)
-  }
-  async requestg ({ url, method = 'GET' }) {
-    // debugger
-    return axios({
-      method: method,
-      url: url,
-      headers: { 'Authorization': auth, 'Content-Type': 'application/json' }
+      headers: {
+        'Authorization': auth,
+        'Content-Type': 'application/json'
+      }
     }).then((response) => response.data)
   }
 }
