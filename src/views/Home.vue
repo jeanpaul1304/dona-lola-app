@@ -14,7 +14,7 @@
         <p>{{currentMark.location.address}}</p>
       </div>
       <div class="dish">
-        <v-carousel class="carrousel" hide-delimiters interval="12000" v-if="currentDishes">
+        <v-carousel class="carrousel" hide-delimiters interval="12000" v-if="currentDishes[0].id">
           <v-carousel-item
             v-for="(item, i) in currentDishes"
             :key="i"
@@ -33,7 +33,7 @@
         <div class="error" v-else style="width: 90%;margin: 24px auto;color:#fff;">
           <p>El chef seleccionado no cuenta con platos para hoy</p>
         </div>
-        <v-btn small v-if="currentDishes"  @click="openOrder" color="primary">Pedir</v-btn>
+        <v-btn small v-if="currentDishes[0].id"  @click="openOrder" color="primary">Pedir</v-btn>
       </div>
     </div>
 
@@ -224,13 +224,15 @@ export default {
   },
   mounted () {
     // debugger
+    this.setLoader(true)
     this.getLocation()
   },
   methods: {
     ...mapActions([
       'getMarkers',
       'getDishes',
-      'putOrder'
+      'putOrder',
+      'setLoader'
     ]),
     getLocation () {
       navigator.geolocation.getCurrentPosition(this.showPosition)
@@ -273,6 +275,10 @@ export default {
           }
           this.generateMarkers(data, mark)
         }
+        this.setLoader(false)
+      }).catch((error) => {
+        console.log(error)
+        this.setLoader(false)
       })
     },
     generateMarkers (data, mark) {

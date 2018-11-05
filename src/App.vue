@@ -24,6 +24,28 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+    <div class="dialog-layer" v-if="dialog">
+      <v-dialog
+        v-model="dialog"
+        hide-overlay
+        persistent
+        width="300"
+      >
+        <v-card
+          color="primary"
+          dark
+        >
+          <v-card-text>
+            Cargando
+            <v-progress-linear
+              indeterminate
+              color="white"
+              class="mb-0"
+            ></v-progress-linear>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+    </div>
     <v-content>
       <router-view/>
     </v-content>
@@ -53,10 +75,16 @@ export default {
       ])
     }
   },
+  computed: {
+    dialog () {
+      return this.$store.state.loader
+    }
+  },
   methods: {
     ...mapActions([
       'changeMenu',
-      'setToken'
+      'setToken',
+      'setLoader'
     ]),
     openMenu () {
       this.changeMenu(true)
@@ -83,7 +111,11 @@ export default {
         })
       } else {
         console.log('aun no!!!')
+        setTimeout(() => {
+          this.setLoader(false)
+        }, 500)
       }
+      this.setLoader(false)
     })
   }
 }
@@ -92,5 +124,7 @@ export default {
 .menu-btn
   position absolute
   z-index 1
-
+.dialog-layer
+  z-index: 1001
+  background: rgba(255,255,255,.3)
 </style>

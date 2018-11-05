@@ -1,13 +1,13 @@
 <template>
   <div>
     <v-form class="ctn-login" v-if="finalForm == 'btns'">
-      <v-btn @click="loginFacebook" class="fb">
-        Login con Facebook
-      </v-btn>
-      <v-btn @click="loginGoogle" class="google">
-        Login con Google
-      </v-btn>
-      <v-divider class="divider"></v-divider>
+      <!--<v-btn @click="loginFacebook" class="fb">-->
+        <!--Login con Facebook-->
+      <!--</v-btn>-->
+      <!--<v-btn @click="loginGoogle" class="google">-->
+        <!--Login con Google-->
+      <!--</v-btn>-->
+      <!--<v-divider class="divider"></v-divider>-->
       <v-btn class="default" @click="finalForm = 'newRegister'">
         Login con Email
       </v-btn>
@@ -32,31 +32,36 @@
         :append-icon="show1 ? 'visibility_off' : 'visibility'"
         v-validate="'required|min:6'"
         :error-messages="errors.collect('password')"
+        data-vv-name="password"
+        data-vv-delay="300"
         :type="show1 ? 'text' : 'password'"
         name="password"
         label="Password"
-        rel="password"
+        ref="password"
+        @click:append="show1 = !show1"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="repassword"
+        prepend-icon="lock"
+        :append-icon="show1 ? 'visibility_off' : 'visibility'"
+        v-validate="'required|min:6|confirmed:$password'"
+        :error-messages="errors.collect('password')"
+        :type="show1 ? 'text' : 'password'"
+        name="repassword"
+        label="Validar password"
+        data-vv-as="password"
+        data-vv-delay="300"
         @click:append="show1 = !show1"
       ></v-text-field>
       <v-checkbox
         v-model="checkbox"
+        required
       >
         <span slot="label">
           Acepto los <a href="#"> terminos y condiciones</a>
         </span>
       </v-checkbox>
-      <!--<v-text-field-->
-        <!--v-model="repassword"-->
-        <!--prepend-icon="lock"-->
-        <!--:append-icon="show1 ? 'visibility_off' : 'visibility'"-->
-        <!--v-validate="'required'"-->
-        <!--:error-messages="errors.collect('password')"-->
-        <!--:type="show1 ? 'text' : 'password'"-->
-        <!--name="repassword"-->
-        <!--label="Validar password"-->
-        <!--data-vv-as="password"-->
-        <!--@click:append="show1 = !show1"-->
-      <!--&gt;</v-text-field>-->
       <p class="error" v-if="error">{{error}}</p>
       <v-flex xs12 sm6 text-center style="margin-bottom:10px;">
         <v-btn
@@ -103,7 +108,8 @@ export default {
           }
         }
       },
-      finalForm: 'btns'
+      finalForm: 'btns',
+      checkbox: false
     }
   },
   methods: {

@@ -96,6 +96,7 @@ export default {
   },
   mounted () {
     this.$validator.localize('en', this.dictionary)
+    this.setLoader(true)
   },
   methods: {
     submit () {
@@ -122,7 +123,8 @@ export default {
     },
     ...mapActions([
       'login',
-      'setToken'
+      'setToken',
+      'setLoader'
     ])
   }
 }

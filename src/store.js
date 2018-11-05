@@ -11,7 +11,8 @@ export default new Vuex.Store({
     showMenu: false,
     logeado: false,
     token: '',
-    chefs: []
+    chefs: [],
+    loader: false
   },
   mutations: {
     setChefs (state, places) {
@@ -21,6 +22,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    setLoader ({state}, flag) {
+      state.loader = flag
+    },
     login (context, data) {
       return AuthService.login(data.email, data.password)
     },
@@ -45,7 +49,11 @@ export default new Vuex.Store({
     },
     getMyOrders () {
       return MenuService.getMyOrders()
+    },
+    searchChefs (context, query) {
+      return MapService.searchChefs(query)
     }
+
   },
   getters: {
     getChefs: state => {

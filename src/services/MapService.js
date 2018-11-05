@@ -16,6 +16,16 @@ class MapService extends Service {
       }
     })
   }
+
+  searchChefs (query) {
+    return this.request({
+      url: 'https://api.donalolafood.com/api/foodPlace/by/name',
+      method: 'POST',
+      body: {
+        'name': query
+      }
+    })
+  }
 }
 
 export default new MapService()
