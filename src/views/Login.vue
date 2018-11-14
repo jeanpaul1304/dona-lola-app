@@ -2,7 +2,7 @@
     <v-container fluid class="bg">
         <v-form class="login-ctn">
             <h1 class="title-ctn">
-                <img src="../assets/img/logo.png" alt="dona lola">
+                <img src="../assets/img/logotipo.jpg" alt="dona lola">
             </h1>
             <v-form v-if="currentForm == 'login'" class="ctn-login">
                 <v-text-field
@@ -156,6 +156,8 @@ export default {
       width 125px
       border-radius 5px
       overflow hidden
+      padding 10px
+      background #fff
   .ctn-login
     background rgba(255, 255, 255, .8)
     border-radius 10px

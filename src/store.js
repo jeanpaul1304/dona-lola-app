@@ -22,7 +22,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    setLoader ({state}, flag) {
+    setLoader ({ state }, flag) {
       state.loader = flag
     },
     login (context, data) {

@@ -235,8 +235,14 @@ export default {
       'setLoader'
     ]),
     getLocation () {
-      navigator.geolocation.getCurrentPosition(this.showPosition, this.errorCallback,{ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
-
+      navigator.geolocation.getCurrentPosition(
+        this.showPosition,
+        this.errorCallback,
+        {
+          maximumAge: 3000,
+          timeout: 5000,
+          enableHighAccuracy: true
+        })
     },
     errorCallback (error) {
       console.log(error)
@@ -289,7 +295,8 @@ export default {
       var marker = new google.maps.Marker({
         position: mark.LatLng,
         map: this.map,
-        title: mark.name
+        title: mark.name,
+        icon: 'https://jeanpaul1304.github.io/dona-lola/dist/img/chef.png'
       })
       marker.addListener('click', (mrk) => {
         this.openInfo(data)
@@ -304,7 +311,7 @@ export default {
       this.currentMark = data
       this.moveToLocation()
     },
-    moveToLocation(){
+    moveToLocation () {
       let location = this.currentMark.location
       var center = new google.maps.LatLng(location.latitude - 0.006, location.longitude)
       // using global variable:
@@ -431,7 +438,7 @@ export default {
   left: 0
   width: 100%
   height: auto
-  background: #fff
+  background: rgb(226, 255, 207)
   font-size 0
   padding 30px 12px 8px 12px
   box-shadow 1px -1px 8px 0px #d2d2d2
@@ -444,6 +451,8 @@ export default {
     width 60%
     vertical-align top
     text-align center
+    .error
+      margin-right: 0
     .carrousel
       width: 90%
       margin: 0 auto

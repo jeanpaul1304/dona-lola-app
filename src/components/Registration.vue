@@ -59,7 +59,7 @@
         required
       >
         <span slot="label">
-          Acepto los <a href="#"> terminos y condiciones</a>
+          Acepto los <a href="#" @click.prevent="flagTerms = true"> terminos y condiciones</a>
         </span>
       </v-checkbox>
       <p class="error" v-if="error">{{error}}</p>
@@ -79,17 +79,23 @@
         </v-flex>
       </v-flex>
     </v-form>
+    <terms :flag-show="flagTerms" @close="flagTerms = false"></terms>
   </div>
 </template>
 
 <script>
+import Terms from './Terms'
 export default {
   name: 'Registration',
+  components: {
+    Terms
+  },
   mounted () {
     this.$validator.localize('en', this.dictionary)
   },
   data () {
     return {
+      flagTerms: false,
       error: '',
       email: '',
       repassword: '',

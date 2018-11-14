@@ -60,10 +60,10 @@ export default {
     closeSession () {
       firebase.auth().signOut().then(() => {
         this.$router.push('/')
-      }).catch(function(error) {
+      }).catch((error) => {
         console.log(error)
       })
-    },
+    }
   }
 }
 </script>
@@ -101,7 +101,7 @@ export default {
     text-align center
     padding 18px
     color #2196f3
-
+    vertical-align top
 .menu-btn
   position absolute
 .ctn-side

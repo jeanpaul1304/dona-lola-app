@@ -26,7 +26,7 @@
             </v-flex>
             <v-flex xs5>
               <v-img
-                :src="item.photoUrl"
+                :src="item.image"
                 height="125px"
                 contain
               ></v-img>
