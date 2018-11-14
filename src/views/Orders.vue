@@ -9,7 +9,7 @@
             <v-flex xs5>
               <v-img
                 v-for="(chef, o) in chefList" v-bind:key="o" v-if="chef.id == order.foodPlaceId"
-                :src="chef.photoUrl"
+                :src="chef.image"
                 height="125px"
                 contain
               ></v-img>
@@ -68,6 +68,7 @@ export default {
       statusList: {
         'OPEN': 'En proceso',
         'CLOSE': 'Entregado',
+        'READY_TO_DELIVERY': 'Listo para entrega',
         'CANCEL': 'Cancelado'
       },
       ...mapState([

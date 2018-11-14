@@ -34,7 +34,7 @@
           </v-layout>
           <v-divider light></v-divider>
           <v-card-actions class="pa-3 text-center">
-            <v-btn @click="checkmenu">Ver Menu</v-btn>
+            <v-btn @click="checkmenu(item)">Ver Menu</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -60,11 +60,19 @@ export default {
     searchByName () {
       this.setLoader(true)
       this.searchChefs(this.search).then((data) => {
-        this.searchedChefs = data.places
+        this.searchedChefs = data
         this.setLoader(false)
       }).catch((error) => {
         console.log(error)
         this.setLoader(false)
+      })
+    },
+    checkmenu (data) {
+      this.$router.push({
+        name: 'home',
+        params: {
+          chef: data
+        }
       })
     },
     ...mapActions([

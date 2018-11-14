@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="ctn-side">
     <div class="menu-side" transition="slide-x-transition" v-show="showSide">
       <div class="bar">
         <v-icon class="back-menu" @click="showSide = false">keyboard_arrow_left</v-icon>
@@ -104,4 +104,7 @@ export default {
 
 .menu-btn
   position absolute
+.ctn-side
+  width 100%
+  background rgba(255,255,255,.4)
 </style>

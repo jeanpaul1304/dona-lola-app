@@ -26,7 +26,7 @@
                   @click:append="show1 = !show1"
                 ></v-text-field>
                 <p v-if="error">{{error}}</p>
-                <v-flex xs12 sm6 text-center style="margin-bottom:10px;">
+                <v-flex xs12 sm12 text-center style="margin-bottom:10px;">
                     <v-btn
                         style="color:#fff"
                         color="teal"
@@ -81,7 +81,8 @@ export default {
       dictionary: {
         custom: {
           email: {
-            required: 'Ingrese su correo'
+            required: 'Ingrese su correo',
+            email: 'Ingrese un email valido'
           },
           password: {
             required: 'Ingrese su contraseña'

@@ -9,9 +9,9 @@
       </v-btn>
       <div class="seller">
         <div class="name">{{currentMark.name}}</div>
-        <img :src="currentMark.photoUrl">
-        <p>Solo para recoger en la dirección del ama de casa entre 12:00pm y 3:00pm</p>
-        <p>{{currentMark.location.address}}</p>
+        <img :src="currentMark.image">
+        <p>Solo para recoger en la dirección del ama de casa entre {{currentMark.openingSchedule}} y {{currentMark.closingSchedule}}</p>
+        <p>{{currentMark.location.address}}, {{currentMark.location.district}}</p>
       </div>
       <div class="dish">
         <v-carousel class="carrousel" hide-delimiters interval="12000" v-if="currentDishes[0].id">
@@ -63,7 +63,7 @@
                   :size="'20vh'"
                   color="grey lighten-4"
                 >
-                  <img :src="currentMark.photoUrl" alt="avatar">
+                  <img :src="currentMark.image" alt="avatar">
                 </v-avatar>
               </div>
               <div class="details">
@@ -235,7 +235,11 @@ export default {
       'setLoader'
     ]),
     getLocation () {
-      navigator.geolocation.getCurrentPosition(this.showPosition)
+      navigator.geolocation.getCurrentPosition(this.showPosition, this.errorCallback,{ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
+
+    },
+    errorCallback (error) {
+      console.log(error)
     },
     searchNearChefMenu () {
       this.showSide = false
@@ -268,7 +272,7 @@ export default {
     showMarkers () {
       this.getMarkers().then((response) => {
         let mark = {}
-        for (let data of response.places) {
+        for (let data of response) {
           mark = {
             LatLng: { lat: data.location.latitude, lng: data.location.longitude },
             name: data.name
@@ -288,13 +292,24 @@ export default {
         title: mark.name
       })
       marker.addListener('click', (mrk) => {
-        this.openInfo(data, data.name, data.id, data.photoUrl)
+        this.openInfo(data)
       })
       this.markers.push(marker)
+      if (this.$route.params.chef) {
+        this.openInfo(this.$route.params.chef)
+      }
     },
     openInfo (data) {
       this.searchDishes(data.id)
       this.currentMark = data
+      this.moveToLocation()
+    },
+    moveToLocation(){
+      let location = this.currentMark.location
+      var center = new google.maps.LatLng(location.latitude - 0.006, location.longitude)
+      // using global variable:
+      console.log(center)
+      this.map.panTo(center)
     },
     searchDishes (idMarker) {
       this.getDishes({ idMarker }).then((response) => {
@@ -387,6 +402,7 @@ export default {
     .ctn-img
       width 35%
       text-align center
+      overflow hidden
       img
         width 90%
     .ctn-details
@@ -413,12 +429,14 @@ export default {
   position: absolute
   bottom: 0
   left: 0
-  with: 100%
+  width: 100%
   height: auto
   background: #fff
   font-size 0
   padding 30px 12px 8px 12px
   box-shadow 1px -1px 8px 0px #d2d2d2
+  max-height 60vh
+  overflow auto
   .dish, .seller
     font-size 14px
     display inline-block
@@ -444,9 +462,11 @@ export default {
           height 130px
           display: flex
           align-items: center
+          overflow hidden
         >>> .v-image
           height auto !important
         .ctn-details
+          margin 10px 0
           .description, .price
             display: inline-block
             vertical-align top

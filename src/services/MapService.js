@@ -8,18 +8,19 @@ class MapService extends Service {
 
   getMarkers () {
     return this.request({
-      url: 'https://api.donalolafood.com/api/foodPlace/listNearby',
+      url: 'https://api.donalolafood.com/api/chef/nearby',
+      method: 'POST',
       body: {
         "latitude": -12.089433,
         "longitude": -77.0228733,
-        "radius": 1000
+        "radius": 5000
       }
     })
   }
 
   searchChefs (query) {
     return this.request({
-      url: 'https://api.donalolafood.com/api/foodPlace/by/name',
+      url: 'https://api.donalolafood.com/api/chef/by/name',
       method: 'POST',
       body: {
         'name': query

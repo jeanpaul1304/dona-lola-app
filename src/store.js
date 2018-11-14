@@ -33,7 +33,7 @@ export default new Vuex.Store({
     },
     getMarkers (context) {
       return MapService.getMarkers().then((data) => {
-        context.commit('setChefs', data.places)
+        context.commit('setChefs', data)
         return data
       })
     },
